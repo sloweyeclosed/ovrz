@@ -46,7 +46,7 @@ def get_user_link(user: types.User) -> str:
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     if message.from_user.id == ADMIN_ID:
-        await message.answer("👑 Режим администратора. Команды:\n"
+        await message.answer("Команды:\n"
                              "/ot [ID] [ответ] - ответить\n"
                              "/ql - список вопросов")
     else:
@@ -102,10 +102,10 @@ async def list_tickets(message: types.Message):
         return
 
     if not tickets:
-        await message.answer("📭 Нет активных вопросов")
+        await message.answer("none")
         return
 
-    response = "📋 Все вопросы:\n\n"
+    response = "all que:\n\n"
     for ticket_id, ticket in tickets.items():
         status = "✅" if ticket["answered"] else "🔄"
         response += f"{status} #{ticket_id}: {ticket['text'][:50]}...\n"
@@ -121,14 +121,14 @@ async def admin_reply(message: types.Message):
     try:
         parts = message.text.split(maxsplit=2)
         if len(parts) < 3:
-            await message.answer("❌ Формат: /ot [ID] [ответ]\nПример: /ot 5 Проблема решена")
+            await message.answer("❌")
             return
 
         ticket_id = int(parts[1])
         answer = parts[2]
 
         if ticket_id not in tickets:
-            await message.answer(f"❌ Вопроса #{ticket_id} не существует")
+            await message.answer(f"❌")
             return
 
         ticket = tickets[ticket_id]
@@ -142,10 +142,10 @@ async def admin_reply(message: types.Message):
         )
 
         tickets[ticket_id]["answered"] = True
-        await message.answer(f"✅ Ответ на вопрос #{ticket_id} отправлен")
+        await message.answer(f"✅ #{ticket_id}")
 
     except Exception as e:
-        await message.answer(f"❌ Ошибка: {str(e)}")
+        await message.answer(f"❌: {str(e)}")
 
 
 async def main():
