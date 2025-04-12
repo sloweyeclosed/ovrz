@@ -1,4 +1,6 @@
 import logging
+import os
+
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -6,18 +8,19 @@ from aiogram.utils.markdown import link
 import sys
 import asyncio
 
-# Настройки
-API_TOKEN = "7581495047:AAHk28H3K5nXSpHuLNaFHB3F23I0KDhaZTA"
-ADMIN_ID = 6674826114  # Ваш цифровой ID
+
+API_TOKEN = os.environ.get("API_TOKEN")      
+ADMIN_ID = int(os.environ.get("ADMIN_ID"))   
+
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
 
-# Хранилище данных
+
 ticket_counter = 0
 tickets = {}  # {ticket_id: {"user_id": int, "text": str, "answered": bool}}
 
-# Меню для пользователя
+
 user_menu = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📨")]
@@ -25,7 +28,7 @@ user_menu = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# Настройка логов
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -67,7 +70,7 @@ async def handle_question(message: types.Message):
     if message.from_user.id == ADMIN_ID:
         return
 
-    # Создаем новый тикет
+
     ticket_counter += 1
     tickets[ticket_counter] = {
         "user_id": message.from_user.id,
@@ -75,10 +78,9 @@ async def handle_question(message: types.Message):
         "answered": False
     }
 
-    # Формируем ссылку на пользователя
     user_link = get_user_link(message.from_user)
 
-    # Уведомляем админа
+ 
     await bot.send_message(
         ADMIN_ID,
         f"🆔 Новый вопрос #{ticket_counter}\n"
@@ -131,7 +133,6 @@ async def admin_reply(message: types.Message):
 
         ticket = tickets[ticket_id]
 
-        # Формируем ответ пользователю с его исходным вопросом
         await bot.send_message(
             ticket["user_id"],
             f"you: {ticket['text']}\n"
