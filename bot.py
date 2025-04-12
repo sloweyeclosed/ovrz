@@ -159,5 +159,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    logging.info("=== Бот запущен ===")
+    logging.info("move")
     asyncio.run(main())
